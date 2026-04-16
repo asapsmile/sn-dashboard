@@ -3,43 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-const SUPABASE_URL='https://ctrblrzuxczmduaqgxfk.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0cmJscnp1eGN6bWR1YXFneGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNTM1NTIsImV4cCI6MjA5MTkyOTU1Mn0.aF_B1g0mWiK7nL3b9iZaydwll6wOsCO76LKK0zHe4i8';
-const ALLOWED_EMAILS=['baysal@smileclubone.com','baysal@smileclubone.de'];
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-async function checkAuth(){
-  const{data:{session}}=await sb.auth.getSession();
-  if(session&&ALLOWED_EMAILS.includes(session.user.email)){
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app').style.display='block';
-    document.getElementById('user-email').textContent=session.user.email;
-    return;
-  }
-  if(session&&!ALLOWED_EMAILS.includes(session.user.email)){
-    await sb.auth.signOut();
-    document.getElementById('login-error').textContent='Access denied. Only authorized accounts.';
-  }
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('app').style.display='none';
-}
-
-async function loginGoogle(){
-  document.getElementById('login-error').textContent='';
-  await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});
-}
-
-async function logout(){
-  await sb.auth.signOut();
-  localStorage.clear();
-  window.location.reload();
-}
-
-sb.auth.onAuthStateChange(()=>checkAuth());
-window.addEventListener('load',checkAuth);
-</script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <title>Smile Nation — Controlling Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -319,6 +283,41 @@ b{font-weight:700}
 
 <div class="ft">Smile Nation Ltd. · Internal Controlling · Auto-generated</div>
 </div><!-- end #app -->
+
+<script>
+// Auth
+const SUPABASE_URL='https://ctrblrzuxczmduaqgxfk.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0cmJscnp1eGN6bWR1YXFneGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNTM1NTIsImV4cCI6MjA5MTkyOTU1Mn0.aF_B1g0mWiK7nL3b9iZaydwll6wOsCO76LKK0zHe4i8';
+const ALLOWED_EMAILS=['baysal@smileclubone.com','baysal@smileclubone.de'];
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+async function checkAuth(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(session&&ALLOWED_EMAILS.includes(session.user.email)){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('user-email').textContent=session.user.email;
+    return;
+  }
+  if(session&&!ALLOWED_EMAILS.includes(session.user.email)){
+    await sb.auth.signOut();
+    document.getElementById('login-error').textContent='Access denied. Only authorized accounts.';
+  }
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+async function loginGoogle(){
+  document.getElementById('login-error').textContent='';
+  await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});
+}
+async function logout(){
+  await sb.auth.signOut();
+  localStorage.clear();
+  window.location.reload();
+}
+sb.auth.onAuthStateChange(()=>checkAuth());
+checkAuth();
+</script>
 
 <script>
 const mo=['Jan','Feb','Mar','Apr*'];
