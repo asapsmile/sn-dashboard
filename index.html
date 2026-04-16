@@ -3,7 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="./supabase.min.js"></script>
+<script id="supabase-loader">
+// Inline loader - tries multiple CDNs
+(function(){
+  var urls=[
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js',
+    'https://unpkg.com/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.49.1/supabase.min.js'
+  ];
+  function load(i){
+    if(i>=urls.length){console.error('Failed to load Supabase');return;}
+    var s=document.createElement('script');
+    s.src=urls[i];
+    s.onload=function(){if(window.supabase){console.log('Supabase loaded from '+urls[i])}else{load(i+1)}};
+    s.onerror=function(){load(i+1)};
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
 <title>Smile Nation — Controlling Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -285,8 +303,10 @@ b{font-weight:700}
 </div><!-- end #app -->
 
 <script>
-// Auth
-const SUPABASE_URL='https://ctrblrzuxczmduaqgxfk.supabase.co';
+// Wait for Supabase to load, then init auth
+function initAuth(){
+  if(!window.supabase){setTimeout(initAuth,200);return;}
+  const SUPABASE_URL='https://ctrblrzuxczmduaqgxfk.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0cmJscnp1eGN6bWR1YXFneGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNTM1NTIsImV4cCI6MjA5MTkyOTU1Mn0.aF_B1g0mWiK7nL3b9iZaydwll6wOsCO76LKK0zHe4i8';
 const ALLOWED_EMAILS=['baysal@smileclubone.com','baysal@smileclubone.de'];
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -317,6 +337,8 @@ async function logout(){
 }
 sb.auth.onAuthStateChange(()=>checkAuth());
 checkAuth();
+}
+initAuth();
 </script>
 
 <script>
