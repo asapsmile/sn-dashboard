@@ -3,19 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-(function(){
-  var h='5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
-  if(localStorage.getItem('sn_auth')===h){return;}
-  var p=prompt('Password:');
-  if(!p){document.body.innerHTML='<h2 style="text-align:center;margin-top:40vh;font-family:sans-serif">Access Denied</h2>';return;}
-  crypto.subtle.digest('SHA-256',new TextEncoder().encode(p)).then(function(buf){
-    var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
-    if(hex===h){localStorage.setItem('sn_auth',h);}
-    else{document.body.innerHTML='<h2 style="text-align:center;margin-top:40vh;font-family:sans-serif;color:#dc2626">Wrong Password</h2>';
-      document.querySelectorAll('.hdr,.tabs,.tc,.ft').forEach(function(e){e.style.display="none"});}
-  });
-})();
+const SUPABASE_URL='https://ctrblrzuxczmduaqgxfk.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0cmJscnp1eGN6bWR1YXFneGZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNTM1NTIsImV4cCI6MjA5MTkyOTU1Mn0.aF_B1g0mWiK7nL3b9iZaydwll6wOsCO76LKK0zHe4i8';
+const ALLOWED_EMAILS=['baysal@smileclubone.de'];
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+async function checkAuth(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(session&&ALLOWED_EMAILS.includes(session.user.email)){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('user-email').textContent=session.user.email;
+    return;
+  }
+  if(session&&!ALLOWED_EMAILS.includes(session.user.email)){
+    await sb.auth.signOut();
+    document.getElementById('login-error').textContent='Access denied. Only authorized accounts.';
+  }
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+async function loginGoogle(){
+  document.getElementById('login-error').textContent='';
+  await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});
+}
+
+async function logout(){
+  await sb.auth.signOut();
+  localStorage.clear();
+  window.location.reload();
+}
+
+sb.auth.onAuthStateChange(()=>checkAuth());
+window.addEventListener('load',checkAuth);
 </script>
 <title>Smile Nation — Controlling Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -53,9 +76,29 @@ b{font-weight:700}
 </head>
 <body>
 
+<!-- Login Screen -->
+<div id="login-screen" style="display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#f8f9fa;font-family:-apple-system,sans-serif">
+  <div style="background:#fff;padding:48px;border-radius:16px;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:center;max-width:400px">
+    <h1 style="font-size:24px;margin-bottom:8px">Smile Nation</h1>
+    <p style="color:#6b7280;margin-bottom:32px;font-size:14px">Internal Controlling Dashboard</p>
+    <button onclick="loginGoogle()" style="display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 24px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:14px;font-weight:600;color:#1a1a2e;transition:all .2s" onmouseover="this.style.background='#f9fafb';this.style.borderColor='#3b82f6'" onmouseout="this.style.background='#fff';this.style.borderColor='#e5e7eb'">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 000 24c0 3.77.9 7.35 2.56 10.52l7.97-5.93z"/><path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.93C6.51 42.62 14.62 48 24 48z"/></svg>
+      Sign in with Google
+    </button>
+    <p id="login-error" style="color:#dc2626;font-size:13px;margin-top:16px"></p>
+  </div>
+</div>
+
+<!-- Dashboard (hidden until auth) -->
+<div id="app" style="display:none">
+
 <div class="hdr">
   <div><h1>Smile Nation Ltd. — Controlling</h1><div class="sub">Internal Only · April 16, 2026</div></div>
-  <div class="badge">LIVE</div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span id="user-email" style="color:#6b7280;font-size:12px"></span>
+    <div class="badge">LIVE</div>
+    <button onclick="logout()" style="padding:6px 14px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:12px;color:#6b7280">Logout</button>
+  </div>
 </div>
 
 <div class="tabs">
@@ -275,6 +318,7 @@ b{font-weight:700}
 </div>
 
 <div class="ft">Smile Nation Ltd. · Internal Controlling · Auto-generated</div>
+</div><!-- end #app -->
 
 <script>
 const mo=['Jan','Feb','Mar','Apr*'];
