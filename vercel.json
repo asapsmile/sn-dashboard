@@ -1,6 +1,5 @@
 {
-  "name": "sn-dashboard",
   "buildCommand": "",
-  "outputDirectory": ".",
+  "outputDirectory": "public",
   "framework": null
 }
