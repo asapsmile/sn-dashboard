@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function(){
+  var h='5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
+  if(localStorage.getItem('sn_auth')===h){return;}
+  var p=prompt('Password:');
+  if(!p){document.body.innerHTML='<h2 style="text-align:center;margin-top:40vh;font-family:sans-serif">Access Denied</h2>';return;}
+  crypto.subtle.digest('SHA-256',new TextEncoder().encode(p)).then(function(buf){
+    var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+    if(hex===h){localStorage.setItem('sn_auth',h);}
+    else{document.body.innerHTML='<h2 style="text-align:center;margin-top:40vh;font-family:sans-serif;color:#dc2626">Wrong Password</h2>';
+      document.querySelectorAll('.hdr,.tabs,.tc,.ft').forEach(function(e){e.style.display="none"});}
+  });
+})();
+</script>
 <title>Smile Nation — Controlling Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
