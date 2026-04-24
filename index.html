@@ -14,7 +14,7 @@
 <div id="pw" style="display:flex;align-items:center;justify-content:center;height:100vh;background:#f8f9fa;font-family:-apple-system,sans-serif"><div style="background:#fff;padding:48px;border-radius:16px;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:center;max-width:360px"><h2 style="margin-bottom:24px">Smile Nation</h2><input id="pwi" type="password" placeholder="Password" style="width:100%;padding:12px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;margin-bottom:12px" onkeydown="if(event.key==='Enter')chk()"><button onclick="chk()" style="width:100%;padding:12px;background:#1a1a2e;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">Login</button><p id="pwe" style="color:#dc2626;font-size:13px;margin-top:12px"></p></div></div>
 <script>function chk(){var p=document.getElementById('pwi').value;crypto.subtle.digest('SHA-256',new TextEncoder().encode(p)).then(function(b){var h=Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('');if(h==='10beb434387198b18cfa28cce1e181c64b46b43b1d639bd1625b4dfc47d31a55'){document.getElementById('pw').style.display='none';document.getElementById('dash').style.display='block';localStorage.setItem('sn_pw',h)}else{document.getElementById('pwe').textContent='Wrong password'}});};if(localStorage.getItem('sn_pw')==='10beb434387198b18cfa28cce1e181c64b46b43b1d639bd1625b4dfc47d31a55'){document.addEventListener('DOMContentLoaded',function(){document.getElementById('pw').style.display='none';document.getElementById('dash').style.display='block'})}</script>
 <div id="dash" style="display:none">
-<div class="hdr"><div><h1>Smile Nation — Controlling</h1><div class="sub">Internal · April 23, 2026</div></div><div class="badge">LIVE</div></div>
+<div class="hdr"><div><h1>Smile Nation — Controlling</h1><div class="sub">Internal · April 24, 2026</div></div><div class="badge">LIVE</div></div>
 <div class="tabs"><div class="tab active" onclick="sw('m',this)">April 2026</div><div class="tab" onclick="sw('q',this)">Q1 2026</div><div class="tab" onclick="sw('y',this)">2026 YTD</div><div class="tab" onclick="sw('u',this)">Unit Economics</div></div>
 
 <div id="m" class="tc active">
@@ -23,7 +23,7 @@
 <div class="c"><div class="l">SN Gezahlt</div><div class="v gr">€10,300</div><div class="d up">+ GOZ €299 = €10,599</div></div>
 <div class="c"><div class="l">SN Offen</div><div class="v yl">€37,597</div><div class="d">+ GOZ €14,570 = €52,167 · 83% offen</div></div>
 <div class="c"><div class="l">Profit (Forecast)</div><div class="v gr">€45,013</div><div class="d up">71.7%</div></div>
-<div class="c"><div class="l">Pat./Tag</div><div class="v">1.48</div><div class="d up">▲ vs Q1: 0.72</div></div>
+<div class="c"><div class="l">Pat./Tag</div><div class="v">1.42</div><div class="d up">▲ vs Q1: 0.72</div></div>
 </div>
 <div class="g21"><div class="cc"><h3>Soll vs. Ist (Revenue)</h3><canvas id="m1" height="90"></canvas></div><div class="cc"><h3>Zahlungsquote April</h3><canvas id="m2" height="90"></canvas></div></div>
 <div class="g3"><div class="cc"><h3>Patienten / Monat</h3><canvas id="m3" height="130"></canvas></div><div class="cc"><h3>Profit Margin % (Ist)</h3><canvas id="m4" height="130"></canvas></div><div class="cc"><h3>Avg. Vertragswert</h3><canvas id="m5" height="130"></canvas></div></div>
